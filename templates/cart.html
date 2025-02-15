@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Shopping Cart</h1>
+
+{% if products %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in products %}
+            <tr class="cart-item">
+                <td>{{ item.name }}</td>
+                <td>${{ "%.2f"|format(item.price) }}</td>
+                <td>
+                    <div class="input-group" style="width: 120px">
+                        <button class="btn btn-outline-secondary" onclick="updateQuantity({{ item.id }}, -1)">-</button>
+                        <input type="text" class="form-control text-center" value="{{ item.quantity }}" readonly>
+                        <button class="btn btn-outline-secondary" onclick="updateQuantity({{ item.id }}, 1)">+</button>
+                    </div>
+                </td>
+                <td>${{ "%.2f"|format(item.subtotal) }}</td>
+                <td>
+                    <button class="btn btn-outline-danger btn-sm" onclick="removeItem({{ item.id }})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                <td colspan="2"><strong>${{ "%.2f"|format(total) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="d-flex justify-content-between mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-primary">Continue Shopping</a>
+    <a href="#" class="btn btn-primary">Proceed to Checkout</a>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-cart-x display-1"></i>
+    <h3 class="mt-3">Your cart is empty</h3>
+    <p class="text-muted">Start shopping to add items to your cart</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Browse Products</a>
+</div>
+{% endif %}
+{% endblock %}

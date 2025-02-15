@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Products</h5>
+                <p class="card-text display-6">{{ products|length }}</p>
+                <a href="{{ url_for('admin_products') }}" class="btn btn-primary">Manage Products</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Orders</h5>
+                <p class="card-text display-6">{{ orders|length }}</p>
+                <a href="{{ url_for('admin_products') }}" class="btn btn-primary">View Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <h3>Recent Orders</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders[:5] %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>${{ "%.2f"|format(order.total) }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if order.status == 'completed' else 'warning' }}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

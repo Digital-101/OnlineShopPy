@@ -1,0 +1,42 @@
+/* Custom styles on top of Bootstrap dark theme */
+.product-card {
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.category-banner {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--bs-border-radius);
+}
+
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--bs-dark);
+    transition: right 0.3s;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.cart-overlay.active {
+    right: 0;
+}
+
+.product-image {
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.category-title {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    border-radius: var(--bs-border-radius);
+}

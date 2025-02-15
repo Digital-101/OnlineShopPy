@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Admin - Products{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Products Management</h1>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        Add Product
+    </button>
+</div>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="height: 50px;">
+                </td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category.name }}</td>
+                <td>${{ "%.2f"|format(product.price) }}</td>
+                <td>{{ product.stock }}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category_id" class="form-label">Category</label>
+                        <select class="form-select" id="category_id" name="category_id" required>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
