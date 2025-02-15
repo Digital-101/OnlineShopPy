@@ -59,24 +59,61 @@ def cart():
         for product_id, quantity in cart_items.items():
             product = Product.query.get(int(product_id))
             if product:
+                item_total = product.price * quantity
                 products.append({
                     'id': product.id,
                     'name': product.name,
                     'price': product.price,
+                    'image_url': product.image_url,
                     'quantity': quantity,
-                    'subtotal': product.price * quantity
+                    'subtotal': item_total
                 })
-                total += product.price * quantity
+                total += item_total
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render_template('cart_items.html', products=products, total=total)
     return render_template('cart.html', products=products, total=total)
 
 @app.route('/cart/add/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
+    product = Product.query.get_or_404(product_id)
     if 'cart' not in session:
         session['cart'] = {}
+
     cart = session['cart']
-    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
+    product_id_str = str(product_id)
+    if product_id_str in cart:
+        cart[product_id_str] += 1
+    else:
+        cart[product_id_str] = 1
+
     session.modified = True
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'message': 'Product added to cart'})
+
+@app.route('/cart/remove/<int:product_id>', methods=['POST'])
+def remove_from_cart(product_id):
+    if 'cart' in session:
+        cart = session['cart']
+        product_id_str = str(product_id)
+        if product_id_str in cart:
+            del cart[product_id_str]
+            session.modified = True
+    return redirect(url_for('cart'))
+
+@app.route('/cart/update/<int:product_id>', methods=['POST'])
+def update_cart(product_id):
+    quantity = int(request.form.get('quantity', 1))
+    if quantity < 1:
+        quantity = 1
+
+    if 'cart' in session:
+        cart = session['cart']
+        product_id_str = str(product_id)
+        if product_id_str in cart:
+            cart[product_id_str] = quantity
+            session.modified = True
+
+    return redirect(url_for('cart'))
 
 @app.route('/admin/dashboard')
 @login_required

@@ -19,20 +19,29 @@
         <tbody>
             {% for item in products %}
             <tr class="cart-item">
-                <td>{{ item.name }}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: contain;" class="me-3">
+                        <div>{{ item.name }}</div>
+                    </div>
+                </td>
                 <td>${{ "%.2f"|format(item.price) }}</td>
                 <td>
-                    <div class="input-group" style="width: 120px">
-                        <button class="btn btn-outline-secondary" onclick="updateQuantity({{ item.id }}, -1)">-</button>
-                        <input type="text" class="form-control text-center" value="{{ item.quantity }}" readonly>
-                        <button class="btn btn-outline-secondary" onclick="updateQuantity({{ item.id }}, 1)">+</button>
-                    </div>
+                    <form action="{{ url_for('update_cart', product_id=item.id) }}" method="POST" class="d-inline">
+                        <div class="input-group" style="width: 120px">
+                            <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input').stepDown(); this.form.submit()">-</button>
+                            <input type="number" name="quantity" class="form-control text-center" value="{{ item.quantity }}" min="1" onchange="this.form.submit()">
+                            <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input').stepUp(); this.form.submit()">+</button>
+                        </div>
+                    </form>
                 </td>
                 <td>${{ "%.2f"|format(item.subtotal) }}</td>
                 <td>
-                    <button class="btn btn-outline-danger btn-sm" onclick="removeItem({{ item.id }})">
-                        <i class="bi bi-trash"></i>
-                    </button>
+                    <form action="{{ url_for('remove_from_cart', product_id=item.id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
